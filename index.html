@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffd1ff, #fbc2eb);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3em;
+            color: #ff4b6a;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .heart {
+            font-size: 60px;
+            position: relative;
+            display: inline-block;
+            animation: float 6s ease-in-out infinite;
+            margin: 20px 0;
+        }
+
+        .message {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 20px 0;
+            font-size: 18px;
+            color: #2d7781;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .show-message {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .button {
+            background: #ff4b6a;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(255, 75, 106, 0.3);
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 75, 106, 0.4);
+            background: #ff3356;
+        }
+
+        .gallery {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .gallery.show {
+            display: grid;
+            opacity: 1;
+        }
+
+        .gallery-item {
+            position: relative;
+            height: 150px;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px;
+            font-size: 14px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        .note {
+            background: #fff5f7;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #ff8eb4;
+            margin: 25px 0;
+            display: none;
+            opacity: 0;
+            transition: all 0.8s ease;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+
+        .note.show {
+            display: block;
+            opacity: 1;
+            animation: fadeScale 0.8s ease-out;
+        }
+
+        .music-player {
+            display: none;
+            margin: 25px 0;
+            padding: 20px;
+            background: #fff5f7;
+            border-radius: 15px;
+            transition: all 0.5s ease;
+        }
+
+        .music-player.show {
+            display: block;
+            animation: fadeScale 0.8s ease-out;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .music-controls button {
+            background: #ff4b6a;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 20px;
+        }
+
+        .volume-control {
+            width: 100px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #ff4b6a;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-control::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #ff4b6a;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .falling-heart {
+            position: fixed;
+            color: #ff4b6a;
+            font-size: 24px;
+            user-select: none;
+            z-index: 1000;
+            animation: falling linear forwards;
+            opacity: 0.8;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes falling {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .message {
+                font-size: 16px;
+            }
+
+            .button {
+                padding: 10px 20px;
+                font-size: 14px;
+                margin: 5px;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
+            .gallery-item {
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="heart">❤️</div>
+        <h1>Happy Valentine's Day!</h1>
+        
+        <div class="message" id="message1">
+            Every moment with you fills my heart with joy and gratitude 🌟
+        </div>
+        <div class="message" id="message2">
+            Your love makes every day feel like Valentine's Day ✨
+        </div>
+        <div class="message" id="message3">
+            Together, we've created the most beautiful story of love 💝
+        </div>
+
+        <button class="button" onclick="showMessages()">Open Your Valentine ✨</button>
+        <button class="button" onclick="toggleNote()">Love Letter 💌</button>
+        <button class="button" onclick="toggleGallery()">Our Photos 📸</button>
+        <button class="button" onclick="toggleMusic()">Our Song 🎵</button>
+
+        <div class="note" id="love-note">
+            <h3>My Dearest Love,</h3>
+            <p>As I write this note, my heart overflows with love for you. Every day with you is a new adventure, a new reason to smile, and a reminder of how blessed I am to have you in my life.</p>
+            <p>Your love has made my world more beautiful than I ever imagined possible. Thank you for being my partner, my best friend, and my soulmate.</p>
+            <p>Forever Yours,<br>❤️</p>
+        </div>
+
+        <div class="gallery" id="photo-gallery">
+            <div class="gallery-item" onclick="openModal('First Date.jpg')">
+                <img src="First Date.jpg" alt="Our First Date">
+                <div class="gallery-caption">Our First Date ❤️</div>
+            </div>
+            <div class="gallery-item" onclick="openModal('Beach Day.avif')">
+                <img src="Beach Day.avif" alt="Beach Day Together">
+                <div class="gallery-caption">Beautiful Beach Day Together 🏖️</div>
+            </div>
+            <div class="gallery-item" onclick="openModal('Movie Night.jpg')">
+                <img src="Movie Night.jpg" alt="Movie Night">
+                <div class="gallery-caption">Cozy Movie Night 🎬</div>
+            </div>
+            <div class="gallery-item" onclick="openModal('Holiday.jpg')">
+                <img src="Holiday.jpg" alt="Holiday">
+                <div class="gallery-caption">Our Special Holiday 🌟</div>
+            </div>
+        </div>
+
+        <div class="music-player" id="music-player">
+            <p style="font-family: 'Dancing Script', cursive; font-size: 1.5em; margin-bottom: 15px;">
+                🎵 Our Love Song 🎵
+            </p>
+            <audio id="background-music" loop>
+                <source src="love me.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <div class="music-controls">
+                <button onclick="togglePlay()">▶️</button>
+                <input type="range" class="volume-control" min="0" max="1" step="0.1" value="0.5" 
+                       onchange="updateVolume(this.value)">
+            </div>
+            <div style="margin-top: 10px; font-style: italic; color: #666;">
+                Now Playing: Love Me ❤️
+            </div>
+    </div>
+
+    <div class="modal" id="image-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <img id="modal-image" src="" alt="Modal Image">
+        </div>
+    </div>
+
+    <script>
+        function showMessages() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    msg.classList.add('show-message');
+                }, index * 800);
+            });
+
+            for (let i = 0; i < 30; i++) {
+                setTimeout(createHeart, i * 200);
+            }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.className = 'falling-heart';
+            
+            heart.style.left = Math.random() * 100 + 'vw';
+            const size = Math.random() * 20 + 15;
+            heart.style.fontSize = size + 'px';
+            const duration = Math.random() * 3 + 2;
+            heart.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(heart);
+            
+            heart.addEventListener('animationend', () => {
+                heart.remove();
+            });
+        }
+
+        function toggleNote() {
+            const note = document.getElementById('love-note');
+            note.classList.toggle('show');
+        }
+
+        function toggleGallery() {
+            const gallery = document.getElementById('photo-gallery');
+            gallery.classList.toggle('show');
+        }
+
+        function toggleMusic() {
+            const player = document.getElementById('music-player');
+            player.classList.toggle('show');
+        }
+
+        function openModal(imageSrc) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-image');
+            modal.classList.add('show');
+            modalImg.src = imageSrc;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('show');
+        }
+
+        const audio = document.getElementById('background-music');
+        let isPlaying = false;
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                document.querySelector('.music-controls button').textContent = '▶️';
+            } else {
+                audio.play();
+                document.querySelector('.music-controls button').textContent = '⏸️';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function updateVolume(value) {
+            audio.volume = value;
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('image-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Keyboard navigation for modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Prevent scrolling when modal is open
+        function toggleScroll(disable) {
+            document.body.style.overflow = disable ? 'hidden' : 'auto';
+        }
+
+        // Enhanced modal functions
+        function openModal(imageSrc) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-image');
+            modal.classList.add('show');
+            modalImg.src = imageSrc;
+            toggleScroll(true);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('show');
+            toggleScroll(false);
+        }
+    </script>
+</body>
+</html>
